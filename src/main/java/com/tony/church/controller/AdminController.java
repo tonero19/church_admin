@@ -48,7 +48,7 @@ public class AdminController {
 		return "home";
 	}
 	
-	// add request mapping for /leaders
+	// add request mapping for /leaders  this is not required
 
 	@GetMapping("/leaders")
 	public String showLeaders() {
