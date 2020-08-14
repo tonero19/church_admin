@@ -119,11 +119,15 @@ public class AdminController {
 		List<Department> allDepartments = departmentService.findAll();
 		Details details = new Details();
 		details.setMemberId(id);
+		String ids = "";
 
 		Set<Department> memberDepartments = member.getDepartments();
 		for(Department memberDept : memberDepartments){
 			details.getSelectedDepartments().add(memberDept.getId());
+			ids += memberDept.getId() + ",";
 		}
+		ids = ids.substring(0,ids.length());
+		details.setIdsAsSingleString(ids);
 
 		/*List<String[]> checkBoxData = new ArrayList<>();
 		for(Department department: allDepartments){
@@ -179,8 +183,19 @@ public class AdminController {
 
 		System.out.println(">>>>>!!!!!>>>> MemberId: " + details.getMemberId());
 		Member member = memberService.findById(details.getMemberId());
+		String[] ids = details.getIdsAsSingleString().split(",");
+		// First remove all member departments
+		Set<Department> memberDepartments = member.getDepartments();
+		System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> member dept ids " + details.getIdsAsSingleString());
+		for (String departmentId : ids) {
+			System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> deptId =  " + departmentId);
+			member.removeDepartment(departmentService.findById(Integer.parseInt(departmentId)));
+		}
+		//System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> member dept size after " + details.getOldSelectedDepartments().size());
+
+		// Then add all new member departments
 		for (Integer departmentId : details.getSelectedDepartments()) {
-			System.out.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>>  " + departmentId);
+			//System.out.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>>  " + departmentId);
 			member.addDepartment(departmentService.findById(departmentId));
 		}
 
