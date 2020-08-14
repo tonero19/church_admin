@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Event</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+</head>
+<body>
+
+<div class="container-fluid">
+    <br>
+
+    <nav class="nav nav-pills justify-content-center">
+        <a class="nav-link active" href="/members">Members</a>
+        <a class="nav-link disabled" href="#">Close</a>
+    </nav>
+
+    <br>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 "></div>
+            <div class="col-sm-8 bg-success">
+                <form action="#" th:object="${mail}" th:action="@{/send-email}" enctype="multipart/form-data" method="post">
+
+                    <div class="form-group mb-2 mt-3">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="option1" name="option1" class="custom-control-input" value="1" th:field="*{option}">
+                            <label class="custom-control-label" for="option1">To all members</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="option2" name="option2" class="custom-control-input" value="2" th:field="*{option}">
+                            <label class="custom-control-label" for="option2">To all Workers</label>
+                        </div>
+                        <!--<div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="option3" name="option3" class="custom-control-input" value="3" th:field="*{option}">
+                            <label class="custom-control-label" for="option3">To Executives</label>
+                        </div>-->
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">To</span></div>
+                        <input type="text" th:field="*{mailToListAsString}" th:value="${mailToListAsString}" th:text="${mailToListAsString}"
+                               class="form-control" >
+<!--                        <input type="checkbox" th:field="*{sendToAll}" th:value="${sendToAll}"  />-->
+<!--                        <label  class="custom-control-label" th:for="${#ids.prev('sendToAll')}">All Members</label>-->
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Subject</span></div>
+                        <input type="text" th:field="*{subject}" th:value="${subject}" th:text="${subject}"
+                               class="form-control" >
+                    </div>
+
+                    <label>Message</label>
+                    <textarea id="message" th:field="*{message}" th:value="${message}" th:text="${message}"
+                           class="form-control" placeholder="Write message.." style="height:200px" required ></textarea>
+
+
+                    <div class="form-group">
+                        <label class="control-label" for="files">Add attachments:</label>
+                        <input type="file" class="form-control" id="files"
+                               placeholder="Add attachments:"  name="files" multiple></input>
+                    </div>
+
+                   <!-- <div class="input-group mb-2 mt-3 "
+                         th:if="${churchEvent.serviceDate != null && churchEvent.serviceDate?.before(#dates.createNow())}">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Attendance</span></div>
+                        <input type="text" th:field="*{attendance}" th:value="${attendance}" th:text="${attendance}"
+                               class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 "
+                         th:if="${churchEvent.serviceDate != null && churchEvent.serviceDate?.before(#dates.createNow())}">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Offering</span></div>
+                        <input type="text" th:field="*{offering}" th:value="${offering}" th:text="${offering}"
+                               class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <input type="hidden" th:field="*{id}" th:value="${id}" th:text="${id}" class="form-control">
+                    </div>-->
+
+                    <br>
+                    <button type="submit" class="btn btn-primary mb-2 offset-10">Send E-mail</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

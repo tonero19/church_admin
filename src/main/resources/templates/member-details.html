@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Details</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+<br>
+<h2 th:text="|Details of ${member.firstName} ${member.lastName}|" class="offset-1"></h2>
+<hr>
+
+<p th:text ="|Email: ${member.email}|" class="offset-1">  </p>
+
+<p th:text ="|Date of Birth: ${member.dateOfBirth}|"  class="offset-1">  </p>
+
+<p th:text ="|Phone: ${member.phoneNumber}|"  class="offset-1">  </p>
+
+<p th:text ="|Address: ${member.address.street} ${member.address.houseNumber} , ${member.address.zipCode}, ${member.address.city}, ${member.address.country}|"  class="offset-1">  </p>
+
+<p th:text ="|Joined the church on: ${member.joinDate}  (year-month-day)|"  class="offset-1">  </p>
+
+<hr>
+    <div class="row offset-1">
+
+<!--        <div class="col-sm-2">-->
+<!--            <table class="table table-striped table table-sm">-->
+<!--                <thead class="text-center thead-dark">-->
+<!--                <tr>-->
+<!--                    <th>Department Name</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody class="text-center tableBody">-->
+<!--                <tr th:each="dept : ${member.departments}">-->
+<!--                    <td th:text="${dept.departmentName}" />-->
+<!--                </tr>-->
+
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+
+        <div class="col-sm-4">
+            <h3>Department(s)</h3>
+
+            <form action="#" th:object="${details}" th:action="@{/members/save_member_departments}" method="get">
+                <ul>
+                    <li th:each="department : ${allDepartments}">
+                        <input type="checkbox" th:field="*{selectedDepartments}" th:value="${department.id}"  />
+                        <label th:for="${#ids.prev('selectedDepartments')}"
+                               th:text="${department.departmentName}"></label>
+                    </li>
+                </ul>
+
+                <div class="input-group mb-2 mt-3 " >
+                    <input type="hidden" th:field="*{memberId}" th:value="${memberId}"  th:text="${memberId}" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2 offset-2" >Save</button>
+            </form>
+        </div>
+
+<!--        <div class="col-sm-2"></div>-->
+        <div class="col-sm-3">
+            <h3  class="offset-2">Tithing History</h3>
+            <table class="table table-striped table table-sm">
+                <thead class="text-center thread-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                </tr>
+                </thead>
+                <tbody class="text-center tableBody">
+                <tr th:each="td : ${member.titheDetails}">
+                    <td th:text="${td.date}" />
+                    <td th:text="${td.amount}" />
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<hr>
+
+<hr>
+
+
+</body>
+</html>

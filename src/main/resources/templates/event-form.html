@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Event</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid">
+    <br>
+
+    <nav class="nav nav-pills justify-content-center">
+        <a class="nav-link active" href="/events">Back to events</a>
+        <a class="nav-link disabled" href="#">Close</a>
+    </nav>
+
+    <br>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 "></div>
+            <div class="col-sm-8 bg-success">
+                <form action="#" th:object="${churchEvent}" th:action="@{/events/save_event}" method="post">
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text">Events</span></div>
+                        <select class="form-control" th:field="*{eventType}" required>
+                            <option th:each="eventType: ${churchEvent.eventTypes}"
+                                    th:value="${eventType}"
+                                    th:text="${eventType}">
+                                    Event Type
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Description</span></div>
+                        <input type="text" th:field="*{description}" th:value="${description}" th:text="${description}" class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Date</span></div>
+                        <input type="date" th:field="*{serviceDate}" th:value="${serviceDate}" th:text="${serviceDate}" class="form-control" required>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Location</span></div>
+                        <input type="text" th:field="*{location}" th:value="${location}" th:text="${location}" class="form-control" required>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 " th:if="${churchEvent.serviceDate != null && churchEvent.serviceDate?.before(#dates.createNow())}">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Attendance</span></div>
+                        <input type="text" th:field="*{attendance}" th:value="${attendance}" th:text="${attendance}" class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 " th:if="${churchEvent.serviceDate != null && churchEvent.serviceDate?.before(#dates.createNow())}">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Offering</span></div>
+                        <input type="text" th:field="*{offering}" th:value="${offering}" th:text="${offering}" class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 " >
+                        <input type="hidden" th:field="*{id}" th:value="${id}" th:text="${id}" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mb-2 offset-10" >Save</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

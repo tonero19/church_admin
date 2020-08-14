@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Event</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid">
+    <br>
+
+    <nav class="nav nav-pills justify-content-center">
+        <a class="nav-link active" href="/members">Back to members</a>
+        <a class="nav-link disabled" href="#">Close</a>
+    </nav>
+
+    <br>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 "></div>
+            <div class="col-sm-6 bg-success">
+                <form action="#" th:object="${member}" th:action="@{/members/save_member}" method="post">
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text">First Name</span></div>
+                        <input type="text" th:field="*{firstName}" th:value="${firstName}" th:text="${firstName}" class="form-control" required>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Last Name</span></div>
+                        <input type="text" th:field="*{lastName}" th:value="${lastName}" th:text="${lastName}" class="form-control" required>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Email</span></div>
+                        <input type="text" th:field="*{email}" th:value="${email}" th:text="${email}" class="form-control" required>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Date of Birth</span></div>
+                        <input type="date" th:field="*{dateOfBirth}" th:value="${dateOfBirth}" th:text="${dateOfBirth}" class="form-control" required>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Phone</span></div>
+                        <input type="text" th:field="*{phoneNumber}" th:value="${phoneNumber}" th:text="${phoneNumber}" class="form-control" >
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Address - Street</span></div>
+                        <input type="text" th:field="*{address.street}" th:value="${address.street}"  class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Address - Number</span></div>
+                        <input type="text" th:field="*{address.houseNumber}" th:value="${address.houseNumber}"  class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Address - Zipcode</span></div>
+                        <input type="text" th:field="*{address.zipCode}" th:value="${address.zipCode}"  class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Address - city</span></div>
+                        <input type="text" th:field="*{address.city}" th:value="${address.city}" class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Address - Country</span></div>
+                        <input type="text" th:field="*{address.country}" th:value="${address.country}" class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2 mt-3">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Joined the church on  </span></div>
+                        <input type="date" th:field="*{joinDate}" th:value="${joinDate}" class="form-control" required>
+                    </div>
+
+                    <div class="input-group mb-2 mt-3 " >
+                        <input type="hidden" th:field="*{id}" th:value="${id}" th:text="${id}" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mb-2 offset-10" >Save</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

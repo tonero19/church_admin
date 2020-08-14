@@ -1,0 +1,15 @@
+Update branch from Master in Github:
+
+1. Raise a pull request from master to sprint branch.
+2. Merge the pull request using github's UI.
+3. Raise a pull request from sprint branch to master.
+4. Merge the pull request.
+
+
+Connecting local branch to remote branch
+	- watch page 91 and 104 of docker lectures
+
+
+STRUCTURE
+
+remote master <-------------> remote branch <--------> local branch
