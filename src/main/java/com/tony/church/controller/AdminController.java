@@ -2,17 +2,17 @@ package com.tony.church.controller;
 
 
 import com.tony.church.component.Details;
-import com.tony.church.entity.Address;
-import com.tony.church.entity.ChurchEvent;
-import com.tony.church.entity.Department;
-import com.tony.church.entity.Member;
+import com.tony.church.entity.*;
 import com.tony.church.model.Mail;
 import com.tony.church.service.ChurchEventService;
 import com.tony.church.service.DepartmentService;
 import com.tony.church.service.MemberService;
+import com.tony.church.service.TitheDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,20 +32,21 @@ public class AdminController {
 	@Autowired
 	DepartmentService departmentService;
 
-	/*@Autowired
-	public DemoController(ChurchServiceImpl churchService) {
-		this.churchService = churchService;
-	}*/
+	@Autowired
+	TitheDetailService titheDetailService;
+
+	@Autowired
+	private ErrorAttributes errorAttributes;
+
+//	@ExceptionHandler(MissingServletRequestParameterException.class)
+//	public void handle(HttpServletRequest request, Exception exception) {
+//
+//	}
 
 	@GetMapping("/")
 	public String showHome(Model model) {
 
-		//List<ChurchEvent> events = churchService.findAll();
-		//for(ChurchEvent event : events)
-		//ChurchEvent churchEvent = new ChurchEvent();
-		//model.addAttribute("churchEvent", churchEvent);
-
-		return "home";
+		return "redirect:/members";
 	}
 	
 	// add request mapping for /leaders  this is not required
@@ -177,7 +178,6 @@ public class AdminController {
 		return "redirect:/members";
 	}
 
-
 	@GetMapping("/members/save_member_departments")
 	public String saveMemberDepartments(@ModelAttribute Details details){
 
@@ -227,6 +227,60 @@ public class AdminController {
 		return "email-form";
 
 	}
+
+	@GetMapping("/members/member/tithe_details")
+	public String memberTitheHistory(@RequestParam("memberId") Integer id, Model model){
+
+		Member member = memberService.findById(id);
+		model.addAttribute("member",member);
+		return "tithe-details";
+	}
+
+	@GetMapping("/members/member/show_update_tithe")
+	public String showUpdateTitheForm(@RequestParam("titheId") int theId, Model model) {
+		//get the tithe
+		TitheDetail tithe = titheDetailService.findById(theId);
+		//System.err.println(tithe);
+		model.addAttribute("tithe", tithe);
+		model.addAttribute("member", tithe.getMember());
+		return "tithe-form";
+	}
+
+	@GetMapping("/members/member/show_add_tithe")
+	public String showAddTitheForm(@RequestParam("memberId") int theId, Model model){
+		Member member = memberService.findById(theId);
+		TitheDetail titheDetail = new TitheDetail();
+		model.addAttribute("tithe", titheDetail);
+		model.addAttribute("member", member);
+		return "tithe-form";
+	}
+
+	@PostMapping("/members/member/save_tithe")
+	public String saveMemberTithe( @ModelAttribute TitheDetail tithe, @RequestParam("memberId") Integer mId){
+		if(tithe.getId() == null)
+			tithe.setId(0);
+
+		Member member = memberService.findById(mId);
+		if(member != null) {
+			tithe.setMember(member);
+			titheDetailService.save(tithe);
+		}
+
+		//System.err.println(">>>>>>>>>>>>>>>>>>>>>>> " + tithe + ">>>>>>>>>>> Mid: "+ mId);
+
+		return "redirect:/members/member/tithe_details?memberId=" + mId +"";
+	}
+
+	@GetMapping("/members/member/delete_tithe")
+	public String deleteSingleTitheEntry(@RequestParam("titheId") Integer id) {
+		TitheDetail titheDetail = titheDetailService.findById(id);
+
+		if(titheDetail != null)
+			titheDetailService.remove(titheDetail);
+
+		return "redirect:/members/member/tithe_details?memberId=" + titheDetail.getMember().getId() + "";
+	}
+
 }
 
 

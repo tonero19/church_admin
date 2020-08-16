@@ -66,26 +66,29 @@
 <!--        <div class="col-sm-2"></div>-->
         <div class="col-sm-3">
             <h3  class="offset-2">Tithing History</h3>
-            <table class="table table-striped table table-sm">
-                <thead class="text-center thread-dark">
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                </tr>
-                </thead>
-                <tbody class="text-center tableBody">
-                <tr th:each="td : ${member.titheDetails}">
-                    <td th:text="${td.date}" />
-                    <td th:text="${td.amount}" />
-                </tr>
-                </tbody>
-            </table>
+<!--            <table class="table table-striped table table-sm">-->
+<!--                <thead class="text-center thread-dark">-->
+<!--                <tr>-->
+<!--                    <th>Date</th>-->
+<!--                    <th>Amount</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody class="text-center tableBody">-->
+<!--                <tr th:each="td : ${member.titheDetails}">-->
+<!--                    <td th:text="${td.date}" />-->
+<!--                    <td th:text="${td.amount}" />-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+            <a th:href="@{/members/member/tithe_details(memberId=${member.id})}"
+               class="btn btn-primary btn-sm mb-3 offset-1">
+                See and Edit Tithing History
+            </a>
         </div>
     </div>
 <hr>
 
 <hr>
-
 
 </body>
 </html>

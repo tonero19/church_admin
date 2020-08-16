@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDate;
 
 @Entity
@@ -24,12 +25,13 @@ public class TitheDetail extends AbstractEntity {
 
     @Column(name="td_date")
     @JsonbDateFormat(value="yyyy-MM-dd")
-    @PastOrPresent(message = "A date for tithe payment must be provided")
-    private LocalDate date;
+   // @PastOrPresent(message = "A date for tithe payment must be provided")
+    private Date date;
 
     @Column(name="amount")
     @NotNull(message = "An amount must be entered")
     private BigDecimal amount;
+
 
     public Member getMember() {
         return member;
@@ -39,11 +41,11 @@ public class TitheDetail extends AbstractEntity {
         this.member = member;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -65,5 +67,15 @@ public class TitheDetail extends AbstractEntity {
     @Override
     public int hashCode() {
         return 31;
+    }
+
+    @Override
+    public String toString() {
+        return "TitheDetail{" +
+                "Id= " + getId() +
+                ", member= " + member +
+                ", date= " + date +
+                ", amount= " + amount +
+                '}';
     }
 }
