@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
@@ -29,6 +30,7 @@ public class Member extends AbstractEntity{
     private String lastName;
 
     @Column(name="email")
+    @Email
     private String email;
 
     @OneToMany(mappedBy = "member", orphanRemoval=true) // //cascade = { CascadeType.ALL

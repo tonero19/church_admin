@@ -28,6 +28,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public List<String> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
+    @Override
     public void save(Member member) {
         memberRepository.save(member);
     }

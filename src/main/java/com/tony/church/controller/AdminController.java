@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -170,8 +172,13 @@ public class AdminController {
 	}
 
 	@PostMapping("/members/save_member")
-	public String saveMember(@ModelAttribute Member member, Model model){
-
+	public String saveMember(@ModelAttribute @Valid Member member, BindingResult bindingResult, Model model){
+		if (bindingResult.hasErrors()) {
+			System.err.println(">>>>>>>>>>>>>>>>>>>>>>>!!!!!!!!!!!>>>>>>>>>> BINDING RESULT ERROR");
+			model.addAttribute("member", member);
+			model.addAttribute("address",member.getAddress());
+			return "member-form";
+		}
 		//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>!!!!!!!!!!!>>>>>>>>>> "+member);
 		memberService.save(member);
 
@@ -187,9 +194,11 @@ public class AdminController {
 		// First remove all member departments
 		Set<Department> memberDepartments = member.getDepartments();
 		System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> member dept ids " + details.getIdsAsSingleString());
+
 		for (String departmentId : ids) {
 			System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> deptId =  " + departmentId);
-			member.removeDepartment(departmentService.findById(Integer.parseInt(departmentId)));
+			if(!departmentId.equals(""))
+				member.removeDepartment(departmentService.findById(Integer.parseInt(departmentId)));
 		}
 		//System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> member dept size after " + details.getOldSelectedDepartments().size());
 
