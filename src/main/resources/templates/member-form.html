@@ -6,6 +6,32 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
+    <script type="text/javascript">
+<!--        $("#memberForm").validate({-->
+<!--            rules: {-->
+<!--                email: {-->
+<!--                    required: true,-->
+<!--                    email: true,-->
+<!--                    remote: {-->
+<!--                        url: "/members/check-email/"+$("#emailField").val(),-->
+<!--                        type: "post"-->
+<!--                     }-->
+<!--                }-->
+<!--            },-->
+<!--            messages: {-->
+<!--                email: {-->
+<!--                    required: "Please Enter Email!",-->
+<!--                    email: "This is not a valid email!",-->
+<!--                    remote: "Email already in use!"-->
+<!--                }-->
+<!--            }-->
+<!--        });-->
+    </script>
+
 </head>
 <body>
 
@@ -23,7 +49,7 @@
         <div class="row">
             <div class="col-sm-2 "></div>
             <div class="col-sm-6 bg-success">
-                <form action="#" th:object="${member}" th:action="@{/members/save_member}" method="post">
+                <form action="#" th:object="${member}" th:action="@{/members/save_member}" method="post" id="memberForm">
                     <div class="input-group mb-2 mt-3 ">
                         <div class="input-group-prepend"><span class="input-group-text">First Name</span></div>
                         <input type="text" th:field="*{firstName}" th:value="${firstName}" th:text="${firstName}" class="form-control" required>
@@ -34,8 +60,9 @@
                         <input type="text" th:field="*{lastName}" th:value="${lastName}" th:text="${lastName}" class="form-control" required>
                     </div>
 
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" >Email Error</div>
                     <div class="input-group mb-2 mt-3 ">
-                        <div class="input-group-prepend"><span class="input-group-text" id="">Email</span></div>
+                        <div class="input-group-prepend"><span class="input-group-text" id="emailField">Email</span></div>
                         <input type="text" th:field="*{email}" th:value="${email}" th:text="${email}" class="form-control" required>
                     </div>
 
@@ -91,6 +118,36 @@
     </div>
 
 </div>
+
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+
+    let id = [[${member.id}]];
+       console.log(id);
+
+    if(id == null) {
+        $("#memberForm").validate({
+                rules: {
+                    email: {
+                        required: true,
+                        email: true,
+                        remote: {
+                            url: '/members/check-email',
+                            type: "get"
+                         }
+                    }
+                },
+                messages: {
+                    email: {
+                        required: "Please Enter Email!",
+                        email: "This is not a valid email!",
+                        remote: "Email already in use!"
+                    }
+                }
+            });
+    }
+
+</script>
 
 </body>
 </html>

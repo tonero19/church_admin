@@ -10,6 +10,8 @@ public interface MemberService {
 
     public Member findById(int id);
 
+    public List<String> findByEmail(String email);
+
     public void save(Member member);
 
     public void remove(Member member);

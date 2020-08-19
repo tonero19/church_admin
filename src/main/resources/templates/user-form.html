@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Event</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid">
+    <br>
+
+    <nav class="nav nav-pills justify-content-center">
+        <a class="nav-link active" href="/members">Back to members</a>
+        <a class="nav-link disabled" href="#">Close</a>
+    </nav>
+
+    <br>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 "></div>
+            <div class="col-sm-6 bg-success">
+                <form action="#" th:object="${appUser}" th:action="@{/members/save_member}" method="post">
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text">username</span></div>
+                        <input type="text" th:field="*{username}" th:value="${username}" th:text="${username}" class="form-control" required>
+                    </div>
+
+
+                    <div class="input-group mb-2 mt-3 ">
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Last Name</span></div>
+                        <input type="password" th:field="*{password}" th:value="${password}" th:text="${password}" class="form-control" required>
+                    </div>
+
+                    <ul>
+                        <li th:each="role : ${roles}">
+                            <input type="checkbox" th:field="*{selectedRoles}" th:value="${role.id}"  />
+                            <label th:for="${#ids.prev('selectedRoles')}"
+                                   th:text="${role.roleName}"></label>
+                        </li>
+                    </ul>
+
+                    <div class="input-group mb-2 mt-3 " >
+                        <input type="hidden" th:field="*{id}" th:value="${id}" th:text="${id}" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mb-2 offset-10" >Save</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

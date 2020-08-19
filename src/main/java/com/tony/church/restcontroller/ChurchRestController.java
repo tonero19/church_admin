@@ -1,10 +1,7 @@
 package com.tony.church.restcontroller;
 
 
-import com.tony.church.entity.ChurchEvent;
-import com.tony.church.entity.Department;
-import com.tony.church.entity.Member;
-import com.tony.church.entity.TitheDetail;
+import com.tony.church.entity.*;
 import com.tony.church.model.Mail;
 import com.tony.church.service.*;
 import org.slf4j.LoggerFactory;
@@ -30,9 +27,14 @@ public class ChurchRestController {
     TitheDetailService titheDetailService;
     @Autowired
     MemberService memberService;
+    @Autowired
+    AppUserService appUserService;
 
     @Autowired
     EmailSenderService emailService;
+
+    @Autowired
+    AppRoleService appRoleService;
 
     @GetMapping("/all_events")
     public List<ChurchEvent> userInfo(){
@@ -271,4 +273,34 @@ public class ChurchRestController {
         emailService.sendEmail(mail);
         System.out.println(">>>>>!!!!>>>>>>>>>>>>> END... Email sent success");
     }
+
+
+    @GetMapping("/user/{username}")
+    public List<String> getUserRoles(@PathVariable("username") String username){
+        return appUserService.findUserRoles(username);
+    }
+
+    @PostMapping("/user/add")
+    public List<String> saveUserAndRoles(@RequestBody AppUser user){
+         user.setAppPassword("{noop}"+user.getAppPassword());
+         user.setId(0);
+         for (String strRole: user.getSelectedRoles()){
+             AppRole role = new AppRole();
+             role.setAppUserName(user.getAppUserName());
+             role.setAppAuthority(strRole);
+             appRoleService.save(role);
+         }
+         appUserService.save(user);
+
+         return appUserService.findUserRoles(user.getAppUserName());
+    }
+
+    @GetMapping("/members/check-email")
+    public boolean checkEmailInDB(@RequestParam("email") String email){
+        // System.err.println(">>>>>>>>>>>>  "+email);
+        List<String> emails = memberService.findByEmail(email);
+        return !(emails != null && emails.size() > 0);
+
+    }
 }
+
