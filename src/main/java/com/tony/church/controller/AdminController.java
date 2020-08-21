@@ -4,10 +4,7 @@ package com.tony.church.controller;
 import com.tony.church.component.Details;
 import com.tony.church.entity.*;
 import com.tony.church.model.Mail;
-import com.tony.church.service.ChurchEventService;
-import com.tony.church.service.DepartmentService;
-import com.tony.church.service.MemberService;
-import com.tony.church.service.TitheDetailService;
+import com.tony.church.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.stereotype.Controller;
@@ -18,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class AdminController {
@@ -39,6 +34,12 @@ public class AdminController {
 
 	@Autowired
 	private ErrorAttributes errorAttributes;
+
+	@Autowired
+	private AppUserService appUserService;
+
+	@Autowired
+	AppRoleService appRoleService;
 
 //	@ExceptionHandler(MissingServletRequestParameterException.class)
 //	public void handle(HttpServletRequest request, Exception exception) {
@@ -131,16 +132,6 @@ public class AdminController {
 		}
 		ids = ids.substring(0,ids.length());
 		details.setIdsAsSingleString(ids);
-
-		/*List<String[]> checkBoxData = new ArrayList<>();
-		for(Department department: allDepartments){
-			boolean flag = false;
-			for(Department memberDept : memberDepartments){
-				if(department.getId() == memberDept.getId())
-					flag = true;
-			}
-			checkBoxData.add(new String[]{department.getId()+"", flag+"", department.getDepartmentName()});
-		}*/
 
 		model.addAttribute("member", member);
 		model.addAttribute("allDepartments", allDepartments);
@@ -239,7 +230,6 @@ public class AdminController {
 
 	@GetMapping("/members/member/tithe_details")
 	public String memberTitheHistory(@RequestParam("memberId") Integer id, Model model){
-
 		Member member = memberService.findById(id);
 		model.addAttribute("member",member);
 		return "tithe-details";
@@ -288,6 +278,79 @@ public class AdminController {
 			titheDetailService.remove(titheDetail);
 
 		return "redirect:/members/member/tithe_details?memberId=" + titheDetail.getMember().getId() + "";
+	}
+
+	@GetMapping("/users/show_update_user")
+	public String showUpdateUserForm(@RequestParam("userId") int theId, Model model) {
+		AppUser user = appUserService.findById(theId);
+		user.setSelectedRoles(appUserService.findUserRoles(user.getAppUserName()));
+		String roles="";
+		for(String role : user.getSelectedRoles()){
+			roles += role+ ",";
+		}
+		user.setPrevSelectedRoles(roles);
+		model.addAttribute("appUser", user);
+		model.addAttribute("userRoles",user.getRoles());
+		return "user-form";
+	}
+
+	@GetMapping("/users")
+	public String allUsers(Model model){
+
+		List<AppUser> users = appUserService.findAll();
+		model.addAttribute("appUsers",users);
+
+		return "users";
+	}
+
+	@GetMapping("/users/show_add_user")
+	public String showAddUserForm(Model model){
+		AppUser appUser = new AppUser();
+		System.err.println(appUser.getRoles());
+		//appUser.getSelectedRoles().add(appUser.getRoles().get(0));
+		model.addAttribute("appUser", appUser);
+		model.addAttribute("userRoles",appUser.getRoles());
+		return "user-form";
+	}
+
+	@PostMapping("/users/save_user")
+	public String saveUser(@ModelAttribute AppUser user){
+
+		String strPrevUserRoles = user.getPrevSelectedRoles();
+		System.err.println(">>>>>>>>>>>>>>>>> "+strPrevUserRoles);
+
+		String[] prevRolesArray = strPrevUserRoles.split(",");
+		List<String> toRemove = new ArrayList<>();
+		List<String> prevRolesList = new LinkedList<>(Arrays.asList(prevRolesArray));
+		for(String prevRole: prevRolesList){
+			for(String newRole: user.getSelectedRoles()){
+				if(prevRole.equals(newRole))
+					toRemove.add(prevRole);
+			}
+		}
+		//System.err.println(">>>>>>>>>>>>>>>>> Prev "+strPrevUserRoles);
+		System.err.println(">>>>>>>>>>>>>>>>> remove "+toRemove);
+		prevRolesList.removeAll(toRemove);
+		user.getSelectedRoles().removeAll(toRemove);
+		System.err.println(">>>>>>>>>>>>>>>>> To Delete "+prevRolesList);
+		System.err.println(">>>>>>>>>>>>>>>>> To add "+user.getSelectedRoles());
+
+		for(String prevRole: prevRolesList)
+			appRoleService.removeByUsernameAndRole(user.getAppUserName(), prevRole);
+
+		user.setAppPassword("{noop}"+user.getAppPassword());
+		if(user.getId() == null)
+			user.setId(0);
+		user.setEnabled(true);
+		for (String strRole: user.getSelectedRoles()) {
+			AppRole role = new AppRole();
+			role.setAppUserName(user.getAppUserName());
+			role.setAppAuthority(strRole);
+			appRoleService.save(role);
+		}
+		appUserService.save(user);
+
+		return "users";
 	}
 
 }

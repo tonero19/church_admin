@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -302,5 +303,22 @@ public class ChurchRestController {
         return !(emails != null && emails.size() > 0);
 
     }
+
+    @GetMapping("/user/check-username")
+    public boolean checkUsernameInDB(@RequestParam("username") String username){
+        return appUserService.usernameTaken(username);
+    }
+
+    @DeleteMapping("/user/delete")
+    public void deleteUserRole(){
+         appRoleService.removeByUsernameAndRole("tunthisisnew@yahoo.de", "ROLE_MEMBER");
+
+    }
+
+
+//    @GetMapping("/user/check-userRoles")
+//    public List<String> getUserRoles(@RequestBody String username){
+//         return appRoleService.allUserRoles(username);
+//    }
 }
 

@@ -6,6 +6,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -34,12 +35,29 @@ public class AppUser extends  AbstractEntity {
         roles.add("ROLE_ADMIN");
     }
 
+    @Transient
     public List<String> getSelectedRoles() {
         return selectedRoles;
     }
 
+    @Transient
     public void setSelectedRoles(List<String> selectedRoles) {
         this.selectedRoles = selectedRoles;
+    }
+
+    @Transient
+    String prevSelectedRoles = "";
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    public String getPrevSelectedRoles() {
+        return prevSelectedRoles;
+    }
+
+    public void setPrevSelectedRoles(String prevSelectedRoles) {
+        this.prevSelectedRoles = prevSelectedRoles;
     }
 
     public String getAppPassword() {
@@ -58,12 +76,14 @@ public class AppUser extends  AbstractEntity {
         this.enabled = enabled;
     }
 
+   // @Transient
     public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+   // @Transient
+    public void setRoles(String[] roles) {
+        this.roles = Arrays.asList(roles);
     }
 
     public String getAppUserName() {

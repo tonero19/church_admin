@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <title>New Event</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
 </head>
 <body>
 
@@ -23,31 +27,34 @@
         <div class="row">
             <div class="col-sm-2 "></div>
             <div class="col-sm-6 bg-success">
-                <form action="#" th:object="${appUser}" th:action="@{/members/save_member}" method="post">
+                <form action="#" id="userForm" method="post" th:action="@{/users/save_user}" th:object="${appUser}">
                     <div class="input-group mb-2 mt-3 ">
-                        <div class="input-group-prepend"><span class="input-group-text">username</span></div>
-                        <input type="text" th:field="*{username}" th:value="${username}" th:text="${username}" class="form-control" required>
+                        <div class="input-group-prepend"><span class="input-group-text">Username</span></div>
+                        <input class="form-control" required th:field="*{appUserName}" th:text="${appUserName}" th:value="${appUserName}" type="text">
                     </div>
 
-
                     <div class="input-group mb-2 mt-3 ">
-                        <div class="input-group-prepend"><span class="input-group-text" id="">Last Name</span></div>
-                        <input type="password" th:field="*{password}" th:value="${password}" th:text="${password}" class="form-control" required>
+                        <div class="input-group-prepend"><span class="input-group-text" id="">Password</span></div>
+                        <input class="form-control" required th:field="*{appPassword}" th:text="${appPassword}" th:value="${appPassword}" type="password">
                     </div>
-
-                    <ul>
-                        <li th:each="role : ${roles}">
-                            <input type="checkbox" th:field="*{selectedRoles}" th:value="${role.id}"  />
-                            <label th:for="${#ids.prev('selectedRoles')}"
-                                   th:text="${role.roleName}"></label>
-                        </li>
-                    </ul>
+                    <div>
+                        <ul>
+                            <li th:each="role : ${userRoles}">
+                               <input type="checkbox" th:field="*{selectedRoles}" th:value="${role}"  />
+                                <label th:for="${#ids.prev('selectedRoles')}"
+                                       th:text="${role}"></label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="input-group mb-2 mt-3 " >
+                        <input class="form-control" th:field="*{id}" th:text="${id}" th:value="${id}" type="hidden">
+                    </div>
 
                     <div class="input-group mb-2 mt-3 " >
-                        <input type="hidden" th:field="*{id}" th:value="${id}" th:text="${id}" class="form-control">
+                        <input class="form-control" th:field="*{prevSelectedRoles}" th:text="${prevSelectedRoles}" th:value="${prevSelectedRoles}" type="hidden">
                     </div>
 
-                    <button type="submit" class="btn btn-primary mb-2 offset-10" >Save</button>
+                    <button class="btn btn-primary mb-2 offset-10" type="submit" >Save</button>
 
                 </form>
             </div>
@@ -55,6 +62,38 @@
     </div>
 
 </div>
+
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+
+    let id = [[${appUser.id}]];
+       console.log(id);
+
+    if(id == null) {
+        $("#userForm").validate({
+                rules: {
+                    username: {
+                        required: true,
+                        remote: {
+                            url: '/user/check-username',
+                            type: "get"
+                         }
+                    },
+                    password: {
+                        required: true,
+                        minlength: 5
+                    }
+                },
+                messages: {
+                    username: {
+                        required: "Please Enter a username",
+                        remote: "username already in use!"
+                    }
+                }
+            });
+    }
+
+</script>
 
 </body>
 </html>

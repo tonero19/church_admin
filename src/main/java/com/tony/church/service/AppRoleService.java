@@ -7,9 +7,13 @@ import java.util.List;
 
 public interface AppRoleService {
 
+    public List<String> allUserRoles(String userName);
+
     public void save(AppRole appRole);
 
     public void remove(AppRole appRole);
 
     public void remove(int id);
+
+    public void removeByUsernameAndRole(String username, String role);
 }
