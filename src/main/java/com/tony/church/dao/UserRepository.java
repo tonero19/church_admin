@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<AppUser, Integer> {
             "where A.username =:username ",
             nativeQuery = true )
     public List<String> findUserRoles(@Param("username") String username);
+
+    public boolean existsAppUserByAppUserName(String appUserName);
 }

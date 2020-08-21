@@ -12,6 +12,8 @@ public interface AppUserService {
 
     public List<String> findUserRoles(String username);
 
+    public boolean usernameTaken(String username);
+
     public void save(AppUser appUser);
 
     public void remove(AppUser appUser);

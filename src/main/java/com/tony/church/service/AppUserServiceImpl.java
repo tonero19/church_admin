@@ -36,6 +36,11 @@ public class AppUserServiceImpl implements  AppUserService{
     }
 
     @Override
+    public boolean usernameTaken(String username) {
+        return userRepository.existsAppUserByAppUserName(username);
+    }
+
+    @Override
     public void save(AppUser appUser) {
         userRepository.save(appUser);
     }

@@ -15,6 +15,11 @@ public class AppRoleServiceImpl implements  AppRoleService {
 
 
     @Override
+    public List<String> allUserRoles(String userName) {
+        return roleRepository.findAllAppAuthorityByAppUserName(userName);
+    }
+
+    @Override
     public void save(AppRole appRole) {
         roleRepository.save(appRole);
     }
@@ -27,5 +32,10 @@ public class AppRoleServiceImpl implements  AppRoleService {
     @Override
     public void remove(int id) {
         roleRepository.deleteById(id);
+    }
+
+    @Override
+    public void removeByUsernameAndRole(String username, String role) {
+        roleRepository.deleteUserRole(username, role);
     }
 }
