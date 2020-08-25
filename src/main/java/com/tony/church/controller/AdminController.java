@@ -41,31 +41,19 @@ public class AdminController {
 	@Autowired
 	AppRoleService appRoleService;
 
-//	@ExceptionHandler(MissingServletRequestParameterException.class)
-//	public void handle(HttpServletRequest request, Exception exception) {
-//
-//	}
+	@GetMapping("/logout")
+	public String logout(){
+
+		return "fancy-login";
+	}
 
 	@GetMapping("/")
 	public String showHome(Model model) {
 
-		return "redirect:/members";
+		return "redirect:/index";
 	}
 	
 	// add request mapping for /leaders  this is not required
-
-	@GetMapping("/leaders")
-	public String showLeaders() {
-		
-		return "leaders";
-	}
-	
-	// add request mapping for /systems
-	
-	@GetMapping("/systems")
-	public String showSystems() {
-		return "systems";
-	}
 
 	@GetMapping("/events")
 	public String getAllEvents(Model model){
@@ -286,7 +274,7 @@ public class AdminController {
 		user.setSelectedRoles(appUserService.findUserRoles(user.getAppUserName()));
 		String roles="";
 		for(String role : user.getSelectedRoles()){
-			roles += role+ ",";
+			roles += user.getAppUserName()+";"+role+ ",";
 		}
 		user.setPrevSelectedRoles(roles);
 		model.addAttribute("appUser", user);
@@ -317,26 +305,35 @@ public class AdminController {
 	public String saveUser(@ModelAttribute AppUser user){
 
 		String strPrevUserRoles = user.getPrevSelectedRoles();
-		System.err.println(">>>>>>>>>>>>>>>>> "+strPrevUserRoles);
 
-		String[] prevRolesArray = strPrevUserRoles.split(",");
-		List<String> toRemove = new ArrayList<>();
-		List<String> prevRolesList = new LinkedList<>(Arrays.asList(prevRolesArray));
-		for(String prevRole: prevRolesList){
-			for(String newRole: user.getSelectedRoles()){
-				if(prevRole.equals(newRole))
-					toRemove.add(prevRole);
+
+		// only if user exists and has roles already attached
+		if(strPrevUserRoles.contains(",")) {
+			System.err.println(">>>>>>>>>>>>>>>>> "+strPrevUserRoles);
+			String[] prevRolesArray = strPrevUserRoles.split(",");
+			List<String> toRemoveOld = new ArrayList<>();
+			List<String> toRemoveNew = new ArrayList<>();
+			List<String> prevRolesList = new LinkedList<>(Arrays.asList(prevRolesArray));
+			for (String prevRole : prevRolesList) {
+				for (String newRole : user.getSelectedRoles()) {
+					if (prevRole.equals(user.getAppUserName() + ";" + newRole)) {
+						toRemoveOld.add(prevRole);
+						toRemoveNew.add(newRole);
+					}
+				}
+			}
+			//System.err.println(">>>>>>>>>>>>>>>>> Prev "+strPrevUserRoles);
+			System.err.println(">>>>>>>>>>>>>>>>> remove " + toRemoveOld);
+			prevRolesList.removeAll(toRemoveOld);
+			user.getSelectedRoles().removeAll(toRemoveNew);
+			System.err.println(">>>>>>>>>>>>>>>>> To Delete " + prevRolesList);
+
+			for (String prevRole : prevRolesList) {
+				String[] oldUserCred = prevRole.split(";");
+				appRoleService.removeByUsernameAndRole(oldUserCred[0], oldUserCred[1]);
 			}
 		}
-		//System.err.println(">>>>>>>>>>>>>>>>> Prev "+strPrevUserRoles);
-		System.err.println(">>>>>>>>>>>>>>>>> remove "+toRemove);
-		prevRolesList.removeAll(toRemove);
-		user.getSelectedRoles().removeAll(toRemove);
-		System.err.println(">>>>>>>>>>>>>>>>> To Delete "+prevRolesList);
-		System.err.println(">>>>>>>>>>>>>>>>> To add "+user.getSelectedRoles());
-
-		for(String prevRole: prevRolesList)
-			appRoleService.removeByUsernameAndRole(user.getAppUserName(), prevRole);
+		System.err.println(">>>>>>>>>>>>>>>>> To add " + user.getSelectedRoles());
 
 		user.setAppPassword("{noop}"+user.getAppPassword());
 		if(user.getId() == null)
@@ -350,7 +347,12 @@ public class AdminController {
 		}
 		appUserService.save(user);
 
-		return "users";
+		return "redirect:/users";
+	}
+
+	@GetMapping("/index")
+	public String index(){
+		return "index";
 	}
 
 }

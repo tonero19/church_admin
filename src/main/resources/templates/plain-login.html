@@ -1,5 +1,4 @@
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
+
 
 <html>
 
@@ -18,7 +17,7 @@
 
 <h3>My Custom Login Page</h3>
 
-	<form:form action="${pageContext.request.contextPath}/authenticateTheUser"
+	<form action="${pageContext.request.contextPath}/authenticateTheUser"
 			   method="POST">
 	
 		<!-- Check for login error -->

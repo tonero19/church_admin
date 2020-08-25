@@ -23,11 +23,7 @@ public class churchSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-        // use jdbc authentication ... oh yeah!!!
-
         auth.jdbcAuthentication().dataSource(securityDataSource);
-
     }
 
     @Override
@@ -36,17 +32,35 @@ public class churchSecurityConfig extends WebSecurityConfigurerAdapter {
         http.
                 csrf().disable().
                 authorizeRequests()
-                .antMatchers("/").hasRole("MEMBER")
-                .antMatchers("/leaders/**").hasRole("MANAGER")
-                .antMatchers("/systems/**").hasRole("ADMIN")
-                //.antMatchers("/church_events/add_church_event").hasRole("ADMIN")
+                .antMatchers("/index").hasRole("MEMBER")
+                .antMatchers("/events").hasRole("MEMBER")
+                .antMatchers("/events/**").hasRole("MANAGER")
+                .antMatchers("/events/**").hasRole("ADMIN")
+
+                .antMatchers("/members").hasRole("MEMBER")
+                .antMatchers("/members/details").hasRole("MEMBER")
+                .antMatchers("/members/member/**").hasRole("MANAGER")
+                .antMatchers("/members/member/**").hasRole("ADMIN")
+
+                .antMatchers("/members/**").hasRole("MANAGER")
+                .antMatchers("/members/**").hasRole("ADMIN")
+
+                .antMatchers("/send-email/**").hasRole("MANAGER")
+                .antMatchers("/send-email/**").hasRole("ADMIN")
+
+                .antMatchers("/users").hasRole("MEMBER")
+                .antMatchers("/users/**").hasRole("ADMIN")
                 .and()
                 .formLogin()
-               // .loginPage("/showMyLoginPage")
+                .loginPage("/showMyLoginPage")
                 .loginProcessingUrl("/authenticateTheUser")
                 .permitAll()
                 .and()
-                .logout().permitAll()
+                .logout().logoutUrl("/logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+
+                .permitAll()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied");
 
