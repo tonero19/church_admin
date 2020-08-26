@@ -328,16 +328,18 @@ public class ChurchRestController {
     public List<List<Object>> indexStart() {
 
         // monthly tithe income
-        String titheQ = "  SELECT month(td_date) M, year(td_date)  Y ,sum(amount) T \n" +
-                "  FROM tithe_detail \n" +
-                "  group by month(td_date), year(td_date) \n" +
-                "  order by year(td_date), month(td_date)";
+        String titheQ = "  SELECT date_part('month', tithe_detail.td_date) AS m,\n" +
+                "    date_part('year', tithe_detail.td_date) AS y,\n" +
+                "    sum(tithe_detail.amount) AS tithe \n" +
+                "   FROM tithe_detail \n" +
+                "  GROUP BY (date_part('month', tithe_detail.td_date)), (date_part('year', tithe_detail.td_date))";
         List<Object[]> tithe = analysesService.nativeQuery(titheQ);
         //monthly offering income
-        String offeringQ = "SELECT month(service_date) M, year(service_date) Y, sum([offering_amount]) O \n " +
-                "  FROM service \n " +
-                "  group by month(service_date), year(service_date) \n " +
-                "  order by year(service_date), month(service_date)";
+        String offeringQ = "SELECT date_part('month', service.service_date) AS m,\n" +
+                "    date_part('year', service.service_date) AS y,\n" +
+                "    sum(service.offering_amount) AS offering\n" +
+                "   FROM service\n" +
+                "  GROUP BY (date_part('month', service.service_date)), (date_part('year', service.service_date))";
         List<Object[]> offering = analysesService.nativeQuery(offeringQ);
 
         //monthly total income
@@ -380,15 +382,17 @@ public class ChurchRestController {
         }
 
         for (Object[] arr : offering){
-            if((Integer) arr[1] == 2020){
-                dataPoints.get((Integer)arr[0]).set(1,arr[2]);
+            if((Double) arr[1] == 2020.0){
+                Integer innerIndex = (int)Math.round((Double)arr[0]);
+                dataPoints.get(innerIndex).set(1,arr[2]);
             }
         }
 
-        for (Object[] arr : tithe){
+        for (Object[] arr : tithe) {
             //System.err.print(">>>>>>> tithe  "+arr[0]+" "+arr[1]+" "+arr[2]);
-            if((Integer) arr[1] == 2020){
-                dataPoints.get((Integer)arr[0]).set(2,arr[2]);
+            if((Double) arr[1] == 2020.0) {
+                Integer innerIndex = (int)Math.round((Double)arr[0]);
+                dataPoints.get(innerIndex).set(2,arr[2]);
             }
         }
 
@@ -401,9 +405,9 @@ public class ChurchRestController {
         List<List<Object>> dataPoints = new ArrayList<>();
 
         // get number of workers per department
-        String workersPerDeptQ = "select dept_name, count(department_id) \n" +
-                "  from viewMemberDepartment \n" +
-                "  group by dept_name";
+        String workersPerDeptQ = " select dept_name, count(department_id) \n" +
+                " from public.\"viewMemberDepartment\" \n" +
+                " group by dept_name";
         List<Object[]> workersPerDept = analysesService.nativeQuery(workersPerDeptQ);
         Object[] heading = {"Department name", "number of Workers"};
         workersPerDept.add(0,heading);
