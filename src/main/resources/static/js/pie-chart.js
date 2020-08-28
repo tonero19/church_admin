@@ -11,7 +11,7 @@ $.ajax({
             Accept : "application/json; charset=utf-8",
             "Content-Type" : "application/json; charset=utf-8"
         },
-        url : 'http://localhost:8080/workers-in-department',
+        url : '/workers-in-department',
         success : function(result) {
             console.log('I got here!!!! ==> pieCallRestBackend');
             google.charts.load('current', {
