@@ -11,7 +11,7 @@ $.ajax({
             Accept : "application/json; charset=utf-8",
             "Content-Type" : "application/json; charset=utf-8"
         },
-        url : 'http://localhost:8080/come-in-index',
+        url : '/come-in-index',
         success : function(result) {
             console.log('I got here!!!! ==> barCallRestBackend');
             google.charts.load('current', {
