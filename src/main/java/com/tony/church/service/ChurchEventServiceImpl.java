@@ -3,6 +3,9 @@ package com.tony.church.service;
 import com.tony.church.dao.ChurchEventRepository;
 import com.tony.church.entity.ChurchEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,8 @@ public class ChurchEventServiceImpl implements ChurchEventService {
     }
 
     @Override
-    public List<ChurchEvent> findAll() {
-        return churchEventRepository.findAll();
+    public Page<ChurchEvent> findAll(Pageable pr) {
+        return churchEventRepository.findAll(pr);
     }
 
     @Override
