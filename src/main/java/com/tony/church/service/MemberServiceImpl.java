@@ -3,6 +3,8 @@ package com.tony.church.service;
 import com.tony.church.dao.MemberRepository;
 import com.tony.church.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +16,8 @@ public class MemberServiceImpl implements MemberService {
     MemberRepository memberRepository;
 
     @Override
-    public List<Member> findAll() {
-        return memberRepository.findAll();
+    public Page<Member> findAll(Pageable pr) {
+        return memberRepository.findAll(pr);
     }
 
     @Override

@@ -42,14 +42,14 @@ public class ChurchRestController {
     @Autowired
     AppRoleService appRoleService;
 
-    @GetMapping("/all_events")
-    public List<ChurchEvent> userInfo() {
-
-        List<ChurchEvent> events = churchEventService.findAll();
-
-        return events;
-
-    }
+//    @GetMapping("/all_events")
+//    public List<ChurchEvent> userInfo() {
+//
+//        List<ChurchEvent> events = churchEventService.findAll();
+//
+//        return events;
+//
+//    }
 
     @GetMapping("/events/single_event/{id}")
     public ChurchEvent getSingleEvent(@PathVariable("id") Integer id) {
@@ -109,14 +109,14 @@ public class ChurchRestController {
 
     }
 
-    @GetMapping("/rest/members")
-    public List<Member> getAllMembers() {
-
-        List<Member> members = memberService.findAll();
-
-        return members;
-
-    }
+//    @GetMapping("/rest/members")
+//    public List<Member> getAllMembers() {
+//
+//        List<Member> members = memberService.findAll();
+//
+//        return members;
+//
+//    }
 
     @GetMapping("/members/{id}")
     public Member getAllMembers(@PathVariable("id") Integer id) {

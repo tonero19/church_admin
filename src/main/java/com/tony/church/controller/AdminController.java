@@ -7,6 +7,8 @@ import com.tony.church.model.Mail;
 import com.tony.church.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -56,9 +58,20 @@ public class AdminController {
 	// add request mapping for /leaders  this is not required
 
 	@GetMapping("/events")
-	public String getAllEvents(Model model){
+	public String getAllEvents(HttpServletRequest request, Model model){
 
-		List<ChurchEvent> events = churchEventService.findAll();
+		int page = 0; //default page number is 0
+		int size = 8; //default page size is 10
+
+		if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+			page = Integer.parseInt(request.getParameter("page")) - 1;
+		}
+
+		if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+			size = Integer.parseInt(request.getParameter("size"));
+		}
+
+		Page<ChurchEvent> events = churchEventService.findAll(PageRequest.of(page, size));
 		model.addAttribute("events",events);
 
 		return "events";
@@ -96,9 +109,21 @@ public class AdminController {
 	}
 
 	@GetMapping("/members")
-	public String allMembers(Model model){
+	public String allMembers(HttpServletRequest request, Model model){
 
-		List<Member> members = memberService.findAll();
+		int page = 0; //default page number is 0
+		int size = 8; //default page size is 10
+
+		if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+			page = Integer.parseInt(request.getParameter("page")) - 1;
+		}
+
+		if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+			size = Integer.parseInt(request.getParameter("size"));
+		}
+
+
+		Page<Member> members = memberService.findAll(PageRequest.of(page, size));
 		model.addAttribute("members",members);
 
 		return "members";
