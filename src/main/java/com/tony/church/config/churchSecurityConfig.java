@@ -29,7 +29,8 @@ public class churchSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.
+        http.   
+		//securityContext(). // store the user after login
                 csrf().disable().
                 authorizeRequests()
                 .antMatchers("/index").hasRole("MEMBER")
@@ -41,6 +42,7 @@ public class churchSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/members/details").hasRole("MEMBER")
                 .antMatchers("/members/member/**").hasRole("MANAGER")
                 .antMatchers("/members/member/**").hasRole("ADMIN")
+		//.antMatchers("/members/member/**").hasAnyRole("ADMIN", "MANAGER") // combines the two above it
 
                 .antMatchers("/members/**").hasRole("MANAGER")
                 .antMatchers("/members/**").hasRole("ADMIN")
@@ -62,7 +64,12 @@ public class churchSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .permitAll()
                 .and()
-                .exceptionHandling().accessDeniedPage("/access-denied");
+                .exceptionHandling().accessDeniedPage("/access-denied")
+		.and()
+		.headers() // do not cache the page
+		.and()
+		.anonymous().principal("guest").authorities("ROLE_GUEST")// create guest user
+									;
 
     }
 

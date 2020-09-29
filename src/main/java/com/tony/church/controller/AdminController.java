@@ -197,10 +197,10 @@ public class AdminController {
 		String[] ids = details.getIdsAsSingleString().split(",");
 		// First remove all member departments
 		Set<Department> memberDepartments = member.getDepartments();
-		System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> member dept ids " + details.getIdsAsSingleString());
+		//System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> member dept ids " + details.getIdsAsSingleString());
 
 		for (String departmentId : ids) {
-			System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> deptId =  " + departmentId);
+			//System.err.println(">>>>>>>>!!!!!!!!!!!!!>>>>>>>> deptId =  " + departmentId);
 			if(!departmentId.equals(""))
 				member.removeDepartment(departmentService.findById(Integer.parseInt(departmentId)));
 		}
@@ -319,7 +319,7 @@ public class AdminController {
 	@GetMapping("/users/show_add_user")
 	public String showAddUserForm(Model model){
 		AppUser appUser = new AppUser();
-		System.err.println(appUser.getRoles());
+		//System.err.println(appUser.getRoles());
 		//appUser.getSelectedRoles().add(appUser.getRoles().get(0));
 		model.addAttribute("appUser", appUser);
 		model.addAttribute("userRoles",appUser.getRoles());
@@ -348,17 +348,17 @@ public class AdminController {
 				}
 			}
 			//System.err.println(">>>>>>>>>>>>>>>>> Prev "+strPrevUserRoles);
-			System.err.println(">>>>>>>>>>>>>>>>> remove " + toRemoveOld);
+			//System.err.println(">>>>>>>>>>>>>>>>> remove " + toRemoveOld);
 			prevRolesList.removeAll(toRemoveOld);
 			user.getSelectedRoles().removeAll(toRemoveNew);
-			System.err.println(">>>>>>>>>>>>>>>>> To Delete " + prevRolesList);
+			//System.err.println(">>>>>>>>>>>>>>>>> To Delete " + prevRolesList);
 
 			for (String prevRole : prevRolesList) {
 				String[] oldUserCred = prevRole.split(";");
 				appRoleService.removeByUsernameAndRole(oldUserCred[0], oldUserCred[1]);
 			}
 		}
-		System.err.println(">>>>>>>>>>>>>>>>> To add " + user.getSelectedRoles());
+		//System.err.println(">>>>>>>>>>>>>>>>> To add " + user.getSelectedRoles());
 
 		user.setAppPassword("{noop}"+user.getAppPassword());
 		if(user.getId() == null)

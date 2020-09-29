@@ -7,6 +7,10 @@ import com.tony.church.model.Mail;
 import com.tony.church.service.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +45,11 @@ public class ChurchRestController {
 
     @Autowired
     AppRoleService appRoleService;
+
+    @Autowired
+    private Environment environment;
+
+    private String activeProfile;
 
 //    @GetMapping("/all_events")
 //    public List<ChurchEvent> userInfo() {
@@ -324,22 +333,41 @@ public class ChurchRestController {
 
     }
 
+    @Profile("production")
     @GetMapping("/come-in-index")
     public List<List<Object>> indexStart() {
+        String titheQ;
+        String offeringQ;
+        activeProfile = environment.getActiveProfiles()[0];
+        System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>"+activeProfile);
+        if (activeProfile.equalsIgnoreCase("production") ){
 
-        // monthly tithe income
-        String titheQ = "  SELECT date_part('month', tithe_detail.td_date) AS m,\n" +
-                "    date_part('year', tithe_detail.td_date) AS y,\n" +
-                "    sum(tithe_detail.amount) AS tithe \n" +
-                "   FROM tithe_detail \n" +
-                "  GROUP BY (date_part('month', tithe_detail.td_date)), (date_part('year', tithe_detail.td_date))";
+            // monthly tithe income
+            titheQ = "  SELECT date_part('month', tithe_detail.td_date) AS m,\n" +
+                    "    date_part('year', tithe_detail.td_date) AS y,\n" +
+                    "    sum(tithe_detail.amount) AS tithe \n" +
+                    "   FROM tithe_detail \n" +
+                    "  GROUP BY (date_part('month', tithe_detail.td_date)), (date_part('year', tithe_detail.td_date))";
+            offeringQ = "SELECT date_part('month', service.service_date) AS m,\n" +
+                    "    date_part('year', service.service_date) AS y,\n" +
+                    "    sum(service.offering_amount) AS offering\n" +
+                    "   FROM service\n" +
+                    "  GROUP BY (date_part('month', service.service_date)), (date_part('year', service.service_date))";
+        } else {
+            titheQ = "  SELECT month(tithe_detail.td_date) AS m,\n" +
+                    "    year(tithe_detail.td_date) AS y,\n" +
+                    "    sum(tithe_detail.amount) AS tithe \n" +
+                    "   FROM tithe_detail \n" +
+                    "  GROUP BY (month(tithe_detail.td_date)), (year(tithe_detail.td_date))";
+            offeringQ = "SELECT month(service.service_date) AS m,\n" +
+                    "    year(service.service_date) AS y,\n" +
+                    "    sum(service.offering_amount) AS offering\n" +
+                    "   FROM service\n" +
+                    "  GROUP BY (month(service.service_date)), (year(service.service_date))";
+        }
         List<Object[]> tithe = analysesService.nativeQuery(titheQ);
         //monthly offering income
-        String offeringQ = "SELECT date_part('month', service.service_date) AS m,\n" +
-                "    date_part('year', service.service_date) AS y,\n" +
-                "    sum(service.offering_amount) AS offering\n" +
-                "   FROM service\n" +
-                "  GROUP BY (date_part('month', service.service_date)), (date_part('year', service.service_date))";
+
         List<Object[]> offering = analysesService.nativeQuery(offeringQ);
 
         //monthly total income
@@ -380,34 +408,54 @@ public class ChurchRestController {
             int year = currentDate.getYear();
             dataPoints.get(index++).set(0, month.name() + " " + year);
         }
+        if(activeProfile.equalsIgnoreCase("production")) {
+            for (Object[] arr : offering) {
+                if ((Double) arr[1] == 2020) {
+                    Integer innerIndex = (int) Math.round((Double) arr[0]);
+                    dataPoints.get(innerIndex).set(1, arr[2]);
+                }
+            }
 
-        for (Object[] arr : offering){
-            if((Double) arr[1] == 2020.0){
-                Integer innerIndex = (int)Math.round((Double)arr[0]);
-                dataPoints.get(innerIndex).set(1,arr[2]);
+            for (Object[] arr : tithe) {
+                //System.err.print(">>>>>>> tithe  "+arr[0]+" "+arr[1]+" "+arr[2]);
+                if ((Double) arr[1] == 2020) {
+                    Integer innerIndex = (int) Math.round((Double) arr[0]);
+                    dataPoints.get(innerIndex).set(2, arr[2]);
+                }
+            }
+        } else {
+            for (Object[] arr : offering) {
+                if ((Integer) arr[1] == 2020) {
+                    Integer innerIndex = (int) Math.round((Integer) arr[0]);
+                    dataPoints.get(innerIndex).set(1, arr[2]);
+                }
+            }
+
+            for (Object[] arr : tithe) {
+                if ((Integer) arr[1] == 2020) {
+                    Integer innerIndex = (int) Math.round((Integer) arr[0]);
+                    dataPoints.get(innerIndex).set(2, arr[2]);
+                }
             }
         }
-
-        for (Object[] arr : tithe) {
-            //System.err.print(">>>>>>> tithe  "+arr[0]+" "+arr[1]+" "+arr[2]);
-            if((Double) arr[1] == 2020.0) {
-                Integer innerIndex = (int)Math.round((Double)arr[0]);
-                dataPoints.get(innerIndex).set(2,arr[2]);
-            }
-        }
-
         return dataPoints;
     }
 
     @GetMapping("/workers-in-department")
     public List<Object[]> workerDepartmentCount() {
-
+        String workersPerDeptQ;
         List<List<Object>> dataPoints = new ArrayList<>();
-
-        // get number of workers per department
-        String workersPerDeptQ = " select dept_name, count(department_id) \n" +
-                " from public.\"viewMemberDepartment\" \n" +
-                " group by dept_name";
+        activeProfile = environment.getActiveProfiles()[0];
+        if (activeProfile.equalsIgnoreCase("production") ) {
+            // get number of workers per department
+            workersPerDeptQ = " select dept_name, count(department_id) \n" +
+                    " from public.\"viewMemberDepartment\" \n" +
+                    " group by dept_name";
+        } else {
+            workersPerDeptQ = " select dept_name, count(department_id) \n" +
+                    " from viewMemberDepartment \n" +
+                    " group by dept_name";
+        }
         List<Object[]> workersPerDept = analysesService.nativeQuery(workersPerDeptQ);
         Object[] heading = {"Department name", "number of Workers"};
         workersPerDept.add(0,heading);
